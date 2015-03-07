@@ -20,8 +20,8 @@ var shortpollInterval = 30 * 1000; // 30 seconds
 
 $( document ).ready(function() {
 	
-	wx = 1*$("meta[name='widget_base_width']").attr("content");
-	wy = 1*$("meta[name='widget_base_height']").attr("content");
+	wx = parseInt($("meta[name='widget_base_width']").attr("content"), 10);
+	wy = parseInt($("meta[name='widget_base_height']").attr("content"), 10);
 	doLongPoll = ($("meta[name='longpoll']").attr("content") == '1');
 	
 
