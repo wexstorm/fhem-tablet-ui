@@ -1,0 +1,394 @@
+{
+	"title": "MY FHEM",
+	"isotope": {
+	},
+	"rooms": [
+		{
+			"title": "GARTEN",
+			"id": "GARTEN",
+			"views": [
+				{
+					"elements":
+					[
+						{
+							"title": "Licht",
+							"data": 
+							{
+								"type": "switch",
+								"device": "Gartenlicht"	
+							}
+						},
+						{
+							"title": "Rollo",
+							"data": 
+							{
+								"type": "switch",
+								"device": "dummyRollo",
+								"on": "up",
+								"off": "down",
+								"icon": "fa-bars"
+							}
+						},
+						{
+							"title": "Switch",
+							"data": 
+							{
+								"type": "switch",
+								"device": "dummySwitch",
+								"on": "1",
+								"off": "0",
+								"icon": "fa-bars"
+							}
+						},
+						{
+							"title": "Temperatur",
+							"cls": "cell big",
+							"data": 
+							{
+								"type": "label",
+								"device": "OutTemp",
+								"part": "2",
+								"unit": "%B0C%0A"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "BAD",
+			"id": "BAD",
+			"views": [
+				{
+					"align": "top",
+					"elements":
+					[
+						{
+							"cls": "cell left",
+							"data": 
+							{
+								"type": "thermostat",
+								"device": "BadHeizung_Clima"	
+							}
+						}
+					]
+				},
+				{
+					"align": "right",
+					"elements":
+					[
+						{
+							"title": "Badradio",
+							"data": 
+							{
+								"type": "switch",
+								"device": "BadRadio",
+								"icon": "fa-music"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "SCHLAFZIMMER",
+			"id": "SCHLAFZIMMER",
+			"views": [
+				{
+					"elements":
+					[
+						{
+							"cls": "cell left",
+							"data": 
+							{
+								"type": "thermostat",
+								"device": "SchlafzimmerHeizung_Clima"	
+							}
+						},
+						{
+							"cls": "cell right",
+							"data": 
+							{
+								"type": "contact",
+								"device": "SchlafzimmerFenster"	
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "KINDERZIMMER",
+			"id": "KINDERZIMMER",
+			"views": [
+				{
+					"elements":
+					[
+						{
+							"cls": "cell left",
+							"data": 
+							{
+								"type": "thermostat",
+								"device": "KinderzimmerHeizung_Clima"	
+							}
+						},
+						{
+							"cls": "cell right",
+							"data": 
+							{
+								"type": "contact",
+								"device": "KinderzimmerFenster"	
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "GALERIE",
+			"id": "GALERIE",
+			"views": [
+				{
+					"elements":
+					[
+						{
+							"title": "Licht",
+							"data": 
+							{
+								"type": "switch",
+								"device": "GalerieLicht"	
+							}
+						}
+					]
+				}
+			]
+		},
+		{		
+			"title": "KUECHE",
+			"id": "KUECHE",
+			"views": [
+				{
+					"align": "left",
+					"elements":
+					[
+						{
+							"data": 
+							{
+								"type": "thermostat",
+								"device": "KuecheHeizung_Clima"	
+							}
+						},
+						{
+							"data": 
+							{
+								"type": "thermostat",
+								"device": "KuecheHeizung2_Clima"	
+							}
+						}
+					]
+				},
+				{
+					"align": "right",
+					"elements":
+					[
+						{
+							"title": "Herdlicht",
+							"data": 
+							{
+								"type": "switch",
+								"device": "HerdLicht_Sw"	
+							}
+						},
+						{
+							"data": 
+							{
+								"type": "contact",
+								"device": "KuechenFenster"	
+							}
+						}
+					]
+				}
+			]
+		},
+		{		
+			"title": "HOMESTATUS",
+			"id": "HOMESTATUS",
+			"views": [
+				{
+					"elements":
+					[
+						{
+							"data": 
+							{
+								"type": "homestatus",
+								"device": "HomeStatus"	
+							}
+						}
+					]
+				}
+			]
+		},
+		{		
+			"title": "WOHNZIMMER",
+			"id": "WOHNZIMMER",
+			"views": [
+				{
+					"align": "left",
+					"elements":
+					[
+						{
+							"data": 
+							{
+								"type": "thermostat",
+								"device": "WohnzimmerHeizung_Clima",
+								"get": "desired-temp",
+								"temp": "measured-temp"
+							}
+						},
+						{
+							"data": 
+							{
+								"type": "thermostat",
+								"device": "WohnzimmerHeizung2_Clima",
+								"get": "desired-temp",
+								"temp": "measured-temp"
+							}
+						}
+					]
+				},
+				{
+					"align": "right",
+					"elements":
+					[
+						{
+							"title": "Schranklicht",
+							"data": 
+							{
+								"type": "switch",
+								"device": "PowerAV_Sw"
+							}
+						}
+					]
+				},
+				{
+					"align": "right",
+					"elements":
+					[
+						{
+							"data": 
+							{
+								"type": "contact",
+								"device": "TerrassenTuer"
+							}
+						},
+						{
+							"title": "Temperatur",
+							"cls": "cell big",
+							"data": 
+							{
+								"type": "label",
+								"device": "THSensorWZ",
+								"get": "temperature",
+								"unit": "%B0C%0A"
+							}
+						},
+						{
+							"title": "Luftfeuchte",
+							"cls": "cell big",
+							"data": 
+							{
+								"type": "label",
+								"device": "THSensorWZ",
+								"get": "humidity",
+								"fix": "0",
+								"unit": "%"
+							}
+						}
+
+					]
+				}
+			]
+		},
+
+		{		
+			"title": "MULTIMEDIA",
+			"id": "MULTIMEDIA",
+			"views": [
+				{
+					"align": "left",
+					"elements":
+					[
+						{
+							"title":"Fernsehen",
+							"data": 
+							{
+								"type": "switch",
+								"device": "Fernsehen",
+								"icon": "fa-film"
+							}
+						}
+					]
+				},
+				{
+					"align": "left",
+					"elements":
+					[
+						{
+							"title":"Radio",
+							"data": 
+							{
+								"type": "switch",
+								"device": "RadioAtTablet",
+								"icon": "fa-music"
+							}
+						}
+					]
+				},
+				{
+					"align": "left",
+					"elements":
+					[
+						{
+							"title": "WebRadio",
+							"data": 
+							{
+								"type": "push",
+								"device": "WebRadio",
+								"icon": "fa-step-backward",
+								"set": "Prev"
+							}
+						},
+						{
+							"data": 
+							{
+								"type": "push",
+								"device": "WebRadio",
+								"icon": "fa-step-forward",
+								"set": "Next"
+							}
+						}
+					]
+				},
+				{
+					"align": "right",
+					"elements":
+					[
+						{
+							"title": "Volume",
+							"cls": "cell left",
+							"data": 
+							{
+								"type": "volume",
+								"device": "RadioVolumeOnTablet"
+							}
+						}
+
+					]
+				}
+			]
+		}
+
+
+		
+	]
+}
