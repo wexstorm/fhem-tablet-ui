@@ -25,7 +25,7 @@ $( document ).ready(function() {
 	doLongPoll = ($("meta[name='longpoll']").attr("content") == '1');
 	
 
-	$.getJSON('data/data.json', function(data){
+	$.getJSON('/fhem/tablet/data/data.json', function(data){
         $('title').html(data.title);
         for (var i = 0; i < data.rooms.length; i++)
         {
