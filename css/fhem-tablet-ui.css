@@ -59,34 +59,33 @@ ul, ol {
     list-style: none;
 }
 
-.gridster ul{
+i {
+  cursor: pointer;
+}
+
+div#masonry {
     width: 100% !important;
     height: 100% !important;
 }
 
-.gridster {
+div#masonry  {
     width: auto;
 }
 
-.gridster * {
+div#masonry  * {
   margin:0;
   padding:0;
 }
 
-.gridster .gs_w {
-    background: #FFF;
-    cursor: pointer;
-    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
-}
 
-.gridster ul li {
+div#masonry div {
     background-color:#2A2A2A;
     overflow: hidden;
     text-align: center;
+    margin:10px;
 }
 
-.gridster li header {
+div#masonry div header {
 	background: #262626;
 	color: #8c8c8c;
 	display: block;

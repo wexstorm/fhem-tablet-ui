@@ -24,249 +24,314 @@ $( document ).ready(function() {
 	wy = $("meta[name='widget_base_height']").attr("content");
 	doLongPoll = ($("meta[name='longpoll']").attr("content") == '1');
 	
-	gridster = $(".gridster > ul").gridster({
-          widget_base_dimensions: [wx, wy],
-          widget_margins: [5, 5],
-          draggable: {
-            handle: 'header'
-          }
-        }).data('gridster');
 
-   	$('div[type=label]').each(function(index) {
-   		$(this).data('get', $(this).data('get') || 'STATE');
-	});
-   	
-   	//init widgets
-	$('div[type="homestatus"]').each(function( index ) {
-		var clientX=0;
-		var clientY=0;
-		var knob_elem =  jQuery('<input/>', {
-			type: 'text',
-		}).data($(this).data())
-		  .data('curval', 10)
-		  .appendTo($(this));
+	$.getJSON('data/data.json', function(data){
+        $('title').html(data.title);
+        for (var i = 0; i < data.rooms.length; i++)
+        {
+        	var room = data.rooms[i];
+        	var roomHTML = '<div>';
+        	roomHTML += '<header>'+room.title+'</header>';
+        	roomHTML += '<div class="container">';
+        	for (var j = 0; j < room.views.length; j++)
+        	{
+        		var view = room.views[j];
+        		var startAlign = '';
+        		var endAlign = '';
+        		if (view.align)
+        		{
+        			if ($.trim(view.align)!='' && $.trim(view.align)!='top')
+        			{
+        				startAlign = '<div class="'+view.align+'">';
+        				endAlign = '</div>';
+        			}
+        		}
+        		else
+    			{
+    				startAlign = '<div class="left">';
+    				endAlign = '</div>';
+    			}
+
+        		roomHTML+=startAlign;
+
+        		var elements = view.elements;
+        		for (var k = 0; k < elements.length; k++)
+        		{
+        			var element = elements[k];
+        			var elementData = element.data;
+        			roomHTML += '<div ';
+	        		for (var dataKey in elementData)
+	        		{
+	        			roomHTML += 'data-'+dataKey+'="'+elementData[dataKey]+'" ';
+	        		}
+	        		var cls = 'cell';
+	        		if (element.cls)
+	        		{
+	        			cls = element.cls;
+	        		}
+	        		
+	        		roomHTML+=' class="'+cls+'" ></div>';
+	        		if (element.title)
+	        		{
+	        			roomHTML += '<div data-type="label" class="cell">'+element.title+'</div>';	
+	        		}
+        		}
+
+
+        		
+        		roomHTML+=endAlign;
+        	}
+        	roomHTML += '</div></div>';
+        	$('div#masonry').append(roomHTML);
+        }
+    
+
+
+		/*gridster = $(".gridster > ul").gridster({
+	          widget_base_dimensions: [wx, wy],
+	          widget_margins: [5, 5],
+	          draggable: {
+	            handle: 'header'
+	          }
+	        }).data('gridster');
+	*/
 		
-		$(this).bind('mousemove', function(e) {
-	
-			knob_elem.data('pageX',e.pageX);
-			knob_elem.data('pageY',e.pageY);
-			e.preventDefault();
+	   	$('div[data-type=label]').each(function(index) {
+	   		$(this).data('get', $(this).data('get') || 'STATE');
 		});
+	   	
+	   	//init widgets
+		$('div[data-type="homestatus"]').each(function( index ) {
+			var clientX=0;
+			var clientY=0;
+			var knob_elem =  jQuery('<input/>', {
+				type: 'text',
+			}).data($(this).data())
+			  .data('curval', 10)
+			  .appendTo($(this));
+			
+			$(this).bind('mousemove', function(e) {
+		
+				knob_elem.data('pageX',e.pageX);
+				knob_elem.data('pageY',e.pageY);
+				e.preventDefault();
+			});
 
-		var device = $(this).attr('device');
-		$(this).data('get', $(this).data('get') || 'STATE');
-		
-		knob_elem.knob({
-			'min': 0,
-			'max': 2 * Math.PI,
-			'step': 0.01,
-			'height':210,
-			'width':210,
-			'bgColor': $(this).data('bgcolor') || '#aaaaaa',
-			'fgColor': $(this).data('fgcolor') || '#aa6900',
-			'tkColor': $(this).data('tkcolor') || '#696969',
-			'minColor': '#2A2A2A',
-			'maxColor': '#696969',
-			'thickness': 0.4,
-			'displayInput': false,
-			'angleOffset' : 0,
-			'reading': $(this).data('set') || '',
-			'draw' : drawHomeSelector,
-			'change' : function (v) { 
-				  startInterval();
-			},
-			'release' : function (v) { 
-			  if (ready){
-				  	setFhemStatus(device, this.o.reading + ' ' + this.o.status);
-				  	this.$.data('curval', v);
-			  }
-			}	
-		});	
-	});	
-	
-	$('div[type="volume"]').each(function( index ) {
-		var knob_elem =  jQuery('<input/>', {
-			type: 'text',
-			value: '10',
-		}).appendTo($(this));
-		
-		var device = $(this).attr('device');
-		$(this).data('get', $(this).data('get') || 'STATE');
-		
-		knob_elem.knob({
-			'min': $(this).data('min') || 0,
-			'max': $(this).data('max') || 70,
-			'height':150,
-			'width':150,
-			//'step':.5,
-			'angleOffset': $(this).data('angleoffset') || -120,
-			'angleArc': $(this).data('anglearc') || 240,
-			'bgColor': $(this).data('bgcolor') || 'transparent',
-			'fgColor': $(this).data('fgcolor') || '#cccccc',
-			'tkColor': $(this).data('tkcolor') || '#696969',
-			'minColor': '#aa6900',
-			'maxColor': '#aa6900',
-			'thickness': .25,
-			'tickdistance': 20,
-			'cursor': 6,
-			'draw' : drawDial,
-			'change' : function (v) { 
-				  startInterval();
-			},
-			'release' : function (v) { 
+			var device = $(this).data('device');
+			$(this).data('get', $(this).data('get') || 'STATE');
+			
+			knob_elem.knob({
+				'min': 0,
+				'max': 2 * Math.PI,
+				'step': 0.01,
+				'height':210,
+				'width':210,
+				'bgColor': $(this).data('bgcolor') || '#aaaaaa',
+				'fgColor': $(this).data('fgcolor') || '#aa6900',
+				'tkColor': $(this).data('tkcolor') || '#696969',
+				'minColor': '#2A2A2A',
+				'maxColor': '#696969',
+				'thickness': 0.4,
+				'displayInput': false,
+				'angleOffset' : 0,
+				'reading': $(this).data('set') || '',
+				'draw' : drawHomeSelector,
+				'change' : function (v) { 
+					  startInterval();
+				},
+				'release' : function (v) { 
 				  if (ready){
-				  		setFhemStatus(device,v);
-				  		this.$.data('curval', v);
+					  	setFhemStatus(device, this.o.reading + ' ' + this.o.status);
+					  	this.$.data('curval', v);
 				  }
-			}	
-		});
+				}	
+			});	
+		});	
 		
-	});
-	
-	$('div[type="thermostat"]').each(function( index ) {
-		var knob_elem =  jQuery('<input/>', {
-			type: 'text',
-			value: '10',
-		}).appendTo($(this));
-		  
-		var device = $(this).attr('device');  
-		//default reading parameter name
-		$(this).data('get', $(this).data('get') || 'desired-temp');
-		$(this).data('temp', $(this).data('temp') || 'measured-temp');
-		
-		knob_elem.knob({
-			'min':10,
-			'max':30,
-			'height':100,
-			'width':100,
-			//'step':.5,
-			'angleOffset': $(this).data('angleoffset') || -120,
-			'angleArc': $(this).data('anglearc') || 240,
-			'bgColor': $(this).data('bgcolor') || 'transparent',
-			'fgColor': $(this).data('fgcolor') || '#cccccc',
-			'tkColor': $(this).data('tkcolor') || '#696969',
-			'minColor': '#4477ff',
-			'maxColor': '#ff0000',
-			'thickness': .25,
-			'cursor': 6,
-			'reading': $(this).data('set') || 'desired-temp',
-			'draw' : drawDial,
-			'change' : function (v) { 
-				//reset poll timer to avoid jump back
-				startInterval();
-			},
-			'release' : function (v) { 
-			  if (ready){
-				setFhemStatus(device, this.o.reading + ' ' + v);
-				$.toast('Set '+ device + this.o.reading + ' ' + v );
-				this.$.data('curval', v);
-			  }
-			}	
-		});
-		
-		
-	});
-
- 	$('div[type="switch"]').each(function(index) {
- 	
-		var device = $(this).attr('device');
-		$(this).data('get', $(this).data('get') || 'STATE');
-		$(this).data('on', $(this).attr('data-on') || 'on');
-		$(this).data('off', $(this).attr('data-off') || 'off');
-		var elem = $(this).famultibutton({
-			icon: 'fa-lightbulb-o',
-			backgroundIcon: 'fa-circle',
-			offColor: '#2A2A2A',
-			onColor: '#2A2A2A',
+		$('div[data-type="volume"]').each(function( index ) {
+			var knob_elem =  jQuery('<input/>', {
+				type: 'text',
+				value: '10',
+			}).appendTo($(this));
 			
-			// Called in toggle on state.
-			toggleOn: function( ) {
-				 setFhemStatus(device,$(this).data('on'));
-			},
-			toggleOff: function( ) {
-				 setFhemStatus(device,$(this).data('off'));
-			},
-		});
-		elem.data('famultibutton',elem);
-		
-	 });
-	
- 	$('div[type="push"]').each(function(index) {
- 	
-		var device = $(this).attr('device');
-		var elem = $(this).famultibutton({
-			backgroundIcon: 'fa-circle-thin',
-			offColor: '#505050',
-			onColor: '#aa6900',
-			mode: 'push', 
+			var device = $(this).data('device');
+			$(this).data('get', $(this).data('get') || 'STATE');
 			
-			// Called in toggle on state.
-			toggleOn: function( ) {
-				 setFhemStatus(device,$(this).data('set'));
-			},
+			knob_elem.knob({
+				'min': $(this).data('min') || 0,
+				'max': $(this).data('max') || 70,
+				'height':150,
+				'width':150,
+				//'step':.5,
+				'angleOffset': $(this).data('angleoffset') || -120,
+				'angleArc': $(this).data('anglearc') || 240,
+				'bgColor': $(this).data('bgcolor') || 'transparent',
+				'fgColor': $(this).data('fgcolor') || '#cccccc',
+				'tkColor': $(this).data('tkcolor') || '#696969',
+				'minColor': '#aa6900',
+				'maxColor': '#aa6900',
+				'thickness': .25,
+				'tickdistance': 20,
+				'cursor': 6,
+				'draw' : drawDial,
+				'change' : function (v) { 
+					  startInterval();
+				},
+				'release' : function (v) { 
+					  if (ready){
+					  		setFhemStatus(device,v);
+					  		this.$.data('curval', v);
+					  }
+				}	
+			});
+			
 		});
-		elem.data('famultibutton',elem);
-	 });
-
- 	$('div[type="contact"]').each(function(index) {
- 	
-		var elem = $(this).famultibutton({
-			icon: 'fa-windows',
-			backgroundIcon: null,
-			onColor: '#aa6900',
-			onBackgroundColor: '#aa6900',
-			offColor: '#505050',
-			offBackgroundColor: '#505050',
-			mode: 'signal',  //toggle, push, ,
+		
+		$('div[data-type="thermostat"]').each(function( index ) {
+			var knob_elem =  jQuery('<input/>', {
+				type: 'text',
+				value: '10',
+			}).appendTo($(this));
+			  
+			var device = $(this).data('device');  
+			//default reading parameter name
+			$(this).data('get', $(this).data('get') || 'desired-temp');
+			$(this).data('temp', $(this).data('temp') || 'measured-temp');
+			
+			knob_elem.knob({
+				'min':10,
+				'max':30,
+				'height':100,
+				'width':100,
+				//'step':.5,
+				'angleOffset': $(this).data('angleoffset') || -120,
+				'angleArc': $(this).data('anglearc') || 240,
+				'bgColor': $(this).data('bgcolor') || 'transparent',
+				'fgColor': $(this).data('fgcolor') || '#cccccc',
+				'tkColor': $(this).data('tkcolor') || '#696969',
+				'minColor': '#4477ff',
+				'maxColor': '#ff0000',
+				'thickness': .25,
+				'cursor': 6,
+				'reading': $(this).data('set') || 'desired-temp',
+				'draw' : drawDial,
+				'change' : function (v) { 
+					//reset poll timer to avoid jump back
+					startInterval();
+				},
+				'release' : function (v) { 
+				  if (ready){
+					setFhemStatus(device, this.o.reading + ' ' + v);
+					$.toast('Set '+ device + this.o.reading + ' ' + v );
+					this.$.data('curval', v);
+				  }
+				}	
+			});
+			
+			
 		});
-		elem.data('famultibutton',elem);
-		//default reading parameter name
-		$(this).data('get', $(this).data('get') || 'STATE');
-		$(this).data('on', $(this).attr('data-on') || 'open');
-		$(this).data('off', $(this).attr('data-off') || 'closed');
-	});
- 
-	$("*").focus(function(){
-    	$(this).blur();
-  	}); 
-  	
-	$('input').css({visibility:'visible'});
 
-	//collect required devices
-	$('div[device]').each(function(index){
-		var device = $(this).attr("device");
-		if(!devices[device])
-			devices[device] = true;
-	});
-	
-	//collect required readings
-	$('[data-get]').each(function(index){
-		var reading = $(this).data("get");
-		if(!readings[reading])
-			readings[reading] = true;
-	});
-	$('[data-temp]').each(function(index){
-		var reading = $(this).data("temp");
-		if(!readings[reading])
-			readings[reading] = true;
-	});
+	 	$('div[data-type="switch"]').each(function(index) {
+	 	
+			var device = $(this).data('device');
+			$(this).data('get', $(this).data('get') || 'STATE');
+			$(this).data('on', $(this).attr('data-on') || 'on');
+			$(this).data('off', $(this).attr('data-off') || 'off');
+			var elem = $(this).famultibutton({
+				icon: 'fa-lightbulb-o',
+				backgroundIcon: 'fa-circle',
+				offColor: '#2A2A2A',
+				onColor: '#2A2A2A',
+				
+				// Called in toggle on state.
+				toggleOn: function( ) {
+					 setFhemStatus(device,$(this).data('on'));
+				},
+				toggleOff: function( ) {
+					 setFhemStatus(device,$(this).data('off'));
+				},
+			});
+			elem.data('famultibutton',elem);
+			
+		 });
+		
+	 	$('div[data-type="push"]').each(function(index) {
+	 	
+			var device = $(this).data('device');
+			var elem = $(this).famultibutton({
+				backgroundIcon: 'fa-circle-thin',
+				offColor: '#505050',
+				onColor: '#aa6900',
+				mode: 'push', 
+				
+				// Called in toggle on state.
+				toggleOn: function( ) {
+					 setFhemStatus(device,$(this).data('set'));
+				},
+			});
+			elem.data('famultibutton',elem);
+		 });
 
-	//get current values of readings
-	for (var reading in readings) {
-		requestFhem(reading);
-	}
-	reading_cntr = Object.keys(readings).length;
+	 	$('div[data-type="contact"]').each(function(index) {
+	 	
+			var elem = $(this).famultibutton({
+				icon: 'fa-windows',
+				backgroundIcon: null,
+				onColor: '#aa6900',
+				onBackgroundColor: '#aa6900',
+				offColor: '#505050',
+				offBackgroundColor: '#505050',
+				mode: 'signal',  //toggle, push, ,
+			});
+			elem.data('famultibutton',elem);
+			//default reading parameter name
+			$(this).data('get', $(this).data('get') || 'STATE');
+			$(this).data('on', $(this).attr('data-on') || 'open');
+			$(this).data('off', $(this).attr('data-off') || 'closed');
+		});
+	 
+		$("*").focus(function(){
+	    	$(this).blur();
+	  	}); 
+	  	
+		$('input').css({visibility:'visible'});
 
-	if ( doLongPoll ){
-		setTimeout(function() {
-				longPoll();
-		}, 1000);
-		shortpollInterval = 15 * 60 * 1000; // 15 minutes
-	}
-	
-	// refresh every x secs
-	startInterval();
+		//collect required devices
+		$('div[device]').each(function(index){
+			var device = $(this).attr("device");
+			if(!devices[device])
+				devices[device] = true;
+		});
+		
+		//collect required readings
+		$('[data-get]').each(function(index){
+			var reading = $(this).data("get");
+			if(!readings[reading])
+				readings[reading] = true;
+		});
+		$('[data-temp]').each(function(index){
+			var reading = $(this).data("temp");
+			if(!readings[reading])
+				readings[reading] = true;
+		});
 
+		//get current values of readings
+		for (var reading in readings) {
+			requestFhem(reading);
+		}
+		reading_cntr = Object.keys(readings).length;
+
+		if ( doLongPoll ){
+			setTimeout(function() {
+					longPoll();
+			}, 1000);
+			shortpollInterval = 15 * 60 * 1000; // 15 minutes
+		}
+		
+		// refresh every x secs
+		startInterval();
+		$('div#masonry').masonry(data.masonry);
+	});
 });
 
 function startInterval() {
@@ -291,7 +356,7 @@ function update(filter) {
    		
    	deviceElements.each(function(index) {
    	
-   		deviceType = $(this).attr('type');
+   		deviceType = $(this).data('type');
    		
    		if (deviceType == 'label'){
  	
@@ -538,7 +603,7 @@ this.getPart = function (s,p) {
 };
 
 this.getDeviceValue = function (device, src) {
-	var devname	= device.attr('device');
+	var devname	= device.data('device');
 	var paraname =	(src && src != '') ? device.data(src) : Object.keys(readings)[0];
 	if (devname && devname.length>0){
 		var params = deviceStates[devname];
